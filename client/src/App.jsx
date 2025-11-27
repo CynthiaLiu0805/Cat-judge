@@ -1,57 +1,76 @@
 import React, { useState } from "react";
 
 export default function App() {
-  const [text, setText] = useState("");
-  const [resp, setResp] = useState(null);
+  const [input, setInput] = useState("");
+  const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function submit() {
-    if (!text.trim()) return alert("请输入争吵内容或要点");
+  const sendToJudge = async () => {
+    if (!input.trim()) return;
     setLoading(true);
-    setResp(null);
+    setResult("");
 
     try {
-      const r = await fetch("http://localhost:3001/api/judge", {
+      const res = await fetch("http://localhost:5000/api/judge", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text })
+        body: JSON.stringify({ prompt: input }),
       });
-      const data = await r.json();
-      setResp(data.result);
-    } catch (e) {
-      alert("请求失败，请检查后端是否已启动");
-      console.error(e);
-    } finally {
-      setLoading(false);
+
+      const data = await res.json();
+      setResult(data.reply);
+    } catch (err) {
+      setResult("服务器错误，请检查后端是否启动！");
     }
-  }
+
+    setLoading(false);
+  };
 
   return (
-    <div style={{ maxWidth: 720, margin: "40px auto", fontFamily: "sans-serif" }}>
-      <h1>🐱 猫猫法官 · 吵架评理（本地 Mock 版）</h1>
-      <textarea
-        rows="6"
-        style={{ width: "100%", fontSize: 16 }}
-        placeholder="写下你们争吵的要点（简短即可）"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-      />
-      <div style={{ marginTop: 12 }}>
-        <button onClick={submit} disabled={loading} style={{ padding: "8px 16px" }}>
-          {loading ? "猫猫判决中..." : "提交给猫猫法官"}
-        </button>
-      </div>
+    <div
+      style={{
+        fontFamily: "Arial",
+        width: "600px",
+        margin: "40px auto",
+        textAlign: "center",
+      }}
+    >
+      <h1>🐱 猫猫法官</h1>
 
-      {resp && (
-        <div style={{ marginTop: 20, background: "#fff", padding: 16, borderRadius: 8, boxShadow: "0 1px 6px rgba(0,0,0,0.06)" }}>
-          <h3>判词</h3>
-          <p><strong>摘要：</strong>{resp.summary}</p>
-          <p><strong>建议（甲）：</strong>{resp.suggestionA}</p>
-          <p><strong>建议（乙）：</strong>{resp.suggestionB}</p>
-          <p><strong>安抚：</strong>{resp.comfort}</p>
-          <p><strong>结论：</strong>{resp.verdict}</p>
-        </div>
-      )}
+      <textarea
+        rows="4"
+        style={{ width: "100%", padding: "10px", fontSize: "16px" }}
+        placeholder="请输入案件描述..."
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+      />
+
+      <button
+        style={{
+          marginTop: "10px",
+          padding: "10px 20px",
+          fontSize: "16px",
+          cursor: "pointer",
+        }}
+        onClick={sendToJudge}
+        disabled={loading}
+      >
+        {loading ? "判词中..." : "提交给猫法官"}
+      </button>
+
+      <div
+        style={{
+          marginTop: "20px",
+          whiteSpace: "pre-wrap",
+          textAlign: "left",
+          background: "#f0f0f0",
+          padding: "15px",
+          borderRadius: "8px",
+          minHeight: "100px",
+        }}
+      >
+        {result || "（判词会出现在这里）"}
+      </div>
     </div>
   );
 }

@@ -728,10 +728,11 @@ var _reactDefault = parcelHelpers.interopDefault(_react);
 var _client = require("react-dom/client");
 var _app = require("./App");
 var _appDefault = parcelHelpers.interopDefault(_app);
-(0, _client.createRoot)(document.getElementById("root")).render(/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _appDefault.default), {}, void 0, false, {
+const root = (0, _client.createRoot)(document.getElementById("root"));
+root.render(/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _appDefault.default), {}, void 0, false, {
     fileName: "src/index.jsx",
-    lineNumber: 5,
-    columnNumber: 52
+    lineNumber: 6,
+    columnNumber: 13
 }, undefined));
 
   $parcel$ReactRefreshHelpers$ca65.postlude(module);
@@ -17410,182 +17411,90 @@ var _reactDefault = parcelHelpers.interopDefault(_react);
 var _s = $RefreshSig$();
 function App() {
     _s();
-    const [text, setText] = (0, _react.useState)("");
-    const [resp, setResp] = (0, _react.useState)(null);
+    const [input, setInput] = (0, _react.useState)("");
+    const [result, setResult] = (0, _react.useState)("");
     const [loading, setLoading] = (0, _react.useState)(false);
-    async function submit() {
-        if (!text.trim()) return alert("\u8BF7\u8F93\u5165\u4E89\u5435\u5185\u5BB9\u6216\u8981\u70B9");
+    const sendToJudge = async ()=>{
+        if (!input.trim()) return;
         setLoading(true);
-        setResp(null);
+        setResult("");
         try {
-            const r = await fetch("http://localhost:3001/api/judge", {
+            const res = await fetch("http://localhost:5000/api/judge", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    text
+                    prompt: input
                 })
             });
-            const data = await r.json();
-            setResp(data.result);
-        } catch (e) {
-            alert("\u8BF7\u6C42\u5931\u8D25\uFF0C\u8BF7\u68C0\u67E5\u540E\u7AEF\u662F\u5426\u5DF2\u542F\u52A8");
-            console.error(e);
-        } finally{
-            setLoading(false);
+            const data = await res.json();
+            setResult(data.reply);
+        } catch (err) {
+            setResult("\u670D\u52A1\u5668\u9519\u8BEF\uFF0C\u8BF7\u68C0\u67E5\u540E\u7AEF\u662F\u5426\u542F\u52A8\uFF01");
         }
-    }
+        setLoading(false);
+    };
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         style: {
-            maxWidth: 720,
+            fontFamily: "Arial",
+            width: "600px",
             margin: "40px auto",
-            fontFamily: "sans-serif"
+            textAlign: "center"
         },
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h1", {
-                children: "\uD83D\uDC31 \u732B\u732B\u6CD5\u5B98 \xb7 \u5435\u67B6\u8BC4\u7406\uFF08\u672C\u5730 Mock \u7248\uFF09"
+                children: "\uD83D\uDC31 \u732B\u732B\u6CD5\u5B98"
             }, void 0, false, {
                 fileName: "src/App.jsx",
-                lineNumber: 31,
+                lineNumber: 38,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("textarea", {
-                rows: "6",
+                rows: "4",
                 style: {
                     width: "100%",
-                    fontSize: 16
+                    padding: "10px",
+                    fontSize: "16px"
                 },
-                placeholder: "\u5199\u4E0B\u4F60\u4EEC\u4E89\u5435\u7684\u8981\u70B9\uFF08\u7B80\u77ED\u5373\u53EF\uFF09",
-                value: text,
-                onChange: (e)=>setText(e.target.value)
+                placeholder: "\u8BF7\u8F93\u5165\u6848\u4EF6\u63CF\u8FF0...",
+                value: input,
+                onChange: (e)=>setInput(e.target.value)
             }, void 0, false, {
                 fileName: "src/App.jsx",
-                lineNumber: 32,
+                lineNumber: 40,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                style: {
+                    marginTop: "10px",
+                    padding: "10px 20px",
+                    fontSize: "16px",
+                    cursor: "pointer"
+                },
+                onClick: sendToJudge,
+                disabled: loading,
+                children: loading ? "\u5224\u8BCD\u4E2D..." : "\u63D0\u4EA4\u7ED9\u732B\u6CD5\u5B98"
+            }, void 0, false, {
+                fileName: "src/App.jsx",
+                lineNumber: 48,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                 style: {
-                    marginTop: 12
+                    marginTop: "20px",
+                    whiteSpace: "pre-wrap",
+                    textAlign: "left",
+                    background: "#f0f0f0",
+                    padding: "15px",
+                    borderRadius: "8px",
+                    minHeight: "100px"
                 },
-                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
-                    onClick: submit,
-                    disabled: loading,
-                    style: {
-                        padding: "8px 16px"
-                    },
-                    children: loading ? "\u732B\u732B\u5224\u51B3\u4E2D..." : "\u63D0\u4EA4\u7ED9\u732B\u732B\u6CD5\u5B98"
-                }, void 0, false, {
-                    fileName: "src/App.jsx",
-                    lineNumber: 40,
-                    columnNumber: 9
-                }, this)
+                children: result || "\uFF08\u5224\u8BCD\u4F1A\u51FA\u73B0\u5728\u8FD9\u91CC\uFF09"
             }, void 0, false, {
                 fileName: "src/App.jsx",
-                lineNumber: 39,
+                lineNumber: 61,
                 columnNumber: 7
-            }, this),
-            resp && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                style: {
-                    marginTop: 20,
-                    background: "#fff",
-                    padding: 16,
-                    borderRadius: 8,
-                    boxShadow: "0 1px 6px rgba(0,0,0,0.06)"
-                },
-                children: [
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h3", {
-                        children: "\u5224\u8BCD"
-                    }, void 0, false, {
-                        fileName: "src/App.jsx",
-                        lineNumber: 47,
-                        columnNumber: 11
-                    }, this),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
-                        children: [
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("strong", {
-                                children: "\u6458\u8981\uFF1A"
-                            }, void 0, false, {
-                                fileName: "src/App.jsx",
-                                lineNumber: 48,
-                                columnNumber: 14
-                            }, this),
-                            resp.summary
-                        ]
-                    }, void 0, true, {
-                        fileName: "src/App.jsx",
-                        lineNumber: 48,
-                        columnNumber: 11
-                    }, this),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
-                        children: [
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("strong", {
-                                children: "\u5EFA\u8BAE\uFF08\u7532\uFF09\uFF1A"
-                            }, void 0, false, {
-                                fileName: "src/App.jsx",
-                                lineNumber: 49,
-                                columnNumber: 14
-                            }, this),
-                            resp.suggestionA
-                        ]
-                    }, void 0, true, {
-                        fileName: "src/App.jsx",
-                        lineNumber: 49,
-                        columnNumber: 11
-                    }, this),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
-                        children: [
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("strong", {
-                                children: "\u5EFA\u8BAE\uFF08\u4E59\uFF09\uFF1A"
-                            }, void 0, false, {
-                                fileName: "src/App.jsx",
-                                lineNumber: 50,
-                                columnNumber: 14
-                            }, this),
-                            resp.suggestionB
-                        ]
-                    }, void 0, true, {
-                        fileName: "src/App.jsx",
-                        lineNumber: 50,
-                        columnNumber: 11
-                    }, this),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
-                        children: [
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("strong", {
-                                children: "\u5B89\u629A\uFF1A"
-                            }, void 0, false, {
-                                fileName: "src/App.jsx",
-                                lineNumber: 51,
-                                columnNumber: 14
-                            }, this),
-                            resp.comfort
-                        ]
-                    }, void 0, true, {
-                        fileName: "src/App.jsx",
-                        lineNumber: 51,
-                        columnNumber: 11
-                    }, this),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
-                        children: [
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("strong", {
-                                children: "\u7ED3\u8BBA\uFF1A"
-                            }, void 0, false, {
-                                fileName: "src/App.jsx",
-                                lineNumber: 52,
-                                columnNumber: 14
-                            }, this),
-                            resp.verdict
-                        ]
-                    }, void 0, true, {
-                        fileName: "src/App.jsx",
-                        lineNumber: 52,
-                        columnNumber: 11
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "src/App.jsx",
-                lineNumber: 46,
-                columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
@@ -17594,7 +17503,7 @@ function App() {
         columnNumber: 5
     }, this);
 }
-_s(App, "zQJJGkQCYcbf048eGDNZmkYVOWs=");
+_s(App, "CmTt52rdSv5OeD2hHB+h+HhRPyk=");
 _c = App;
 var _c;
 $RefreshReg$(_c, "App");
