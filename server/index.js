@@ -12,39 +12,14 @@ app.use(express.json());
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-
 app.post("/api/judge", async (req, res) => {
+  const { nameA, nameB, sideA_said, sideA_reason, sideB_said, sideB_reason } = req.body;
+
   console.log("收到前端：", req.body);
 
-  // 从前端接收字段
-  const { sideA_said, sideA_reason, sideB_said, sideB_reason } = req.body;
-
-  if (!sideA_said || !sideA_reason || !sideB_said || !sideB_reason) {
-    return res.status(400).json({ error: "四个字段都不能为空" });
+  if (!sideA_said && !sideB_said) {
+    return res.status(400).json({ error: "内容不能为空" });
   }
-
-  // 生成要发送给 AI 的 prompt
-  const prompt = `
-这是双方的对话信息：
-
-【A 方说的话】
-${sideA_said}
-
-【A 为什么生气】
-${sideA_reason}
-
-【B 方说的话】
-${sideB_said}
-
-【B 为什么生气】
-${sideB_reason}
-
-请给出：
-
-1. 🐾 吵架的根源原因  
-2. 😿 双方分别的问题在哪（各说清楚，不偏袒）  
-3. 💗 和解方案（温柔一点）
-`;
 
   try {
     const completion = await openai.chat.completions.create({
@@ -52,11 +27,30 @@ ${sideB_reason}
       messages: [
         {
           role: "system",
-          content: "你是一个可爱的猫咪法官，用温柔但专业的方式进行仲裁。",
+          content: "你是一个可爱的猫咪法官，用温柔但专业的方式仲裁双方争吵。",
         },
         {
           role: "user",
-          content: prompt,
+          content: `
+双方信息如下：
+
+【${nameA || "A 方"} 说的话】
+${sideA_said}
+
+【${nameA || "A 方"} 为什么生气】
+${sideA_reason}
+
+【${nameB || "B 方"} 说的话】
+${sideB_said}
+
+【${nameB || "B 方"} 为什么生气】
+${sideB_reason}
+
+请给出：
+1. 吵架的根本原因
+2. 双方各自的问题（公平，不偏袒）
+3. 温柔的和解方案
+        `,
         },
       ],
     });
@@ -67,6 +61,7 @@ ${sideB_reason}
     res.status(500).json({ error: "AI 服务器错误" });
   }
 });
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
