@@ -1,7 +1,7 @@
 import { useState } from "react";
 import jsPDF from "jspdf";
 import "./App.css";
-import "./fonts/NotoSansSC.js";
+// import "./fonts/NotoSansSC.js";
 export default function App() {
   const [nameA, setNameA] = useState("");
   const [nameB, setNameB] = useState("");
@@ -39,39 +39,6 @@ export default function App() {
     setLoading(false);
   }
 
-  function downloadPDF() {
-    const pdf = new jsPDF();
-
-    pdf.addFileToVFS("NotoSansSC.ttf", window.NotoSansSC);  
-pdf.addFont("NotoSansSC.ttf", "NotoSansSC", "normal");
-pdf.setFont("NotoSansSC");
-
-    pdf.setFontSize(20);
-    pdf.text("🐱 猫咪法官判决书", 20, 20);
-
-    pdf.setFontSize(12);
-    pdf.text(`👩‍⚖️ 审判双方：`, 20, 35);
-    pdf.text(`A 方：${nameA}`, 20, 45);
-    pdf.text(`B 方：${nameB}`, 20, 55);
-
-    pdf.text(`📌 双方陈述：`, 20, 75);
-    pdf.text(`【${nameA} 做了什么】`, 20, 85);
-    pdf.text(sideA_said, 20, 95);
-
-    pdf.text(`【${nameA} 为什么生气】`, 20, 115);
-    pdf.text(sideA_reason, 20, 125);
-
-    pdf.text(`【${nameB} 做了什么】`, 20, 145);
-    pdf.text(sideB_said, 20, 155);
-
-    pdf.text(`【${nameB} 为什么生气】`, 20, 175);
-    pdf.text(sideB_reason, 20, 185);
-
-    pdf.text(`🐾 猫咪法官判决：`, 20, 205);
-    pdf.text(result, 20, 215, { maxWidth: 170 });
-
-    pdf.save("猫咪法官判决书.pdf");
-  }
 
   return (
     <div className="container">
@@ -133,9 +100,6 @@ pdf.setFont("NotoSansSC");
           <h2>🐾 判决结果</h2>
           <pre>{result}</pre>
 
-          <button className="pdf-btn" onClick={downloadPDF}>
-            📄 下载 PDF 判决书
-          </button>
         </div>
       )}
     </div>

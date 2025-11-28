@@ -25,5 +25,7 @@ dist-ssr
 *.pem
 
 server/.env
+server/node_modules/
 
-client/.parcel-cache/data.mdb
+client/.parcel-cache/
+client/node_modules/
